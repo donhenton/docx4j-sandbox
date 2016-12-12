@@ -1,0 +1,9 @@
+
+https://dzone.com/articles/create-complex-word-docx
+
+http://stackoverflow.com/questions/20484722/docx4j-how-to-replace-placeholder-with-value
+
+http://bridgei2i.com/blog/programmatically-creating-ms-office-compatible-charts/
+
+
+http://www.docx4java.org/forums/docx-java-f6/replace-org-docx4j-wml-text-with-hyperlink-t2273.html
