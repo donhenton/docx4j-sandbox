@@ -86,10 +86,15 @@ public class PowerPointGenerator {
 
     }
 
+    /**
+     * get image dimensions
+     * @param is
+     * @param suffix
+     * @return
+     * @throws IOException 
+     */
     private static Dimension getImgDimension(InputStream is,String suffix) throws IOException {
         ImageInputStream stream = ImageIO.createImageInputStream(is);
-        
-
         Iterator<ImageReader> iter = ImageIO.getImageReadersBySuffix(suffix);
 
         while (iter.hasNext()) {
@@ -109,6 +114,14 @@ public class PowerPointGenerator {
         return null;
     }
 
+    /**
+     * create the xml Pic object that will be inserted into the  PPTX 
+     * structure
+     * @param relId
+     * @param imgDim
+     * @return
+     * @throws Exception 
+     */
     private Object createPicture(String relId,Dimension imgDim) throws Exception {
         java.util.HashMap<String, String> mappings = new java.util.HashMap<String, String>();
 
