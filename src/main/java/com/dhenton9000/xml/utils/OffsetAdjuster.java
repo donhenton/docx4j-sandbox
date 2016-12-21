@@ -36,7 +36,7 @@ public class OffsetAdjuster {
         this.scale = scaleAsPercent/100.0f;
         float w = (new Double((double) imgDim.width * this.scale/DPI)).floatValue();
         float h = (new Double((double) imgDim.height * this.scale/DPI)).floatValue();
-        //it has been scaled and switch to inces
+        //it has been scaled and switched to inches
          this.imageDimension = new Point2D.Float(w,h);
               
         double wCalc = (PPTX_WIDTH_IN - this.imageDimension.getX())/2;
