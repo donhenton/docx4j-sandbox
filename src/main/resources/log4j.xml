@@ -29,7 +29,9 @@ zzzzzzzzzzzzzzzzzzzzzzz
     </appender>
 
    
-
+ <logger name="org.apache.xmlgraphics">
+        <level value="ERROR"/>
+    </logger>
     <logger name="com.dhenton9000">
         <level value="DEBUG"/>
     </logger>

@@ -50,42 +50,20 @@ public class PPTXExplorer {
 
         //simpleCreate();
         PPTXExplorer p = new PPTXExplorer();
-       // p.replaceImage();
-       p.getXML();
+       p.replaceImage();
+      // p.getXML();
 
     }
     
     private void getXML() throws Exception
     {
-        String SAMPLE_PICTURE = 			
-	      "<p:pic xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:p=\"http://schemas.openxmlformats.org/presentationml/2006/main\"> "
-	        + "<p:nvPicPr>"
-	          + "<p:cNvPr id=\"${id1}\" name=\"${name}\" descr=\"${descr}\"/>"
-	          + "<p:cNvPicPr>"
-	            + "<a:picLocks noChangeAspect=\"1\"/>"
-	          + "</p:cNvPicPr>"
-	          + "<p:nvPr/>"
-	        + "</p:nvPicPr>"
-	        + "<p:blipFill>"
-	          + "<a:blip r:embed=\"${rEmbedId}\" cstate=\"print\"/>"
-	          + "<a:stretch>"
-	            + "<a:fillRect/>"
-	          + "</a:stretch>"
-	        + "</p:blipFill>"
-	        + "<p:spPr>"
-	          + "<a:xfrm>"
-	            + "<a:off x=\"${offx}\" y=\"${offy}\"/>"
-	            + "<a:ext cx=\"${extcx}\" cy=\"${extcy}\"/>"
-	          + "</a:xfrm>"
-	          + "<a:prstGeom prst=\"rect\">"
-	            + "<a:avLst/>"
-	          + "</a:prstGeom>"
-	        + "</p:spPr>"
-	      + "</p:pic>";
         
-        Document doc = XmlUtilities.stringToDoc(SAMPLE_PICTURE);
-        String ii = XmlUtilities.docToString(doc, true,true);
-        LOG.debug("\n\n"+ii+"\n\n");
+        
+        String SAMPLE_PICTURE =  
+        XmlUtilities.getStringResource("templates/picElement.xml",this.getClass().getClassLoader());
+        //Document doc = XmlUtilities.stringToDoc(SAMPLE_PICTURE);
+        //String ii = XmlUtilities.docToString(doc, true,true);
+        LOG.debug("\n\n"+SAMPLE_PICTURE+"\n\n");
         
     }
 
@@ -104,13 +82,13 @@ public class PPTXExplorer {
         while (partIter.hasNext()) {
 
             Object i = partIter.next();
-            LOG.debug(i.getClass().getName());
+           // LOG.debug(i.getClass().getName());
             if (i instanceof Pic) {
                 partIter.remove();
             }
         }
-        File file = new File(System.getProperty("user.dir") + "/src/test/resources/images/greentick.png");
-        InputStream isImage = this.getClass().getResourceAsStream("fred");
+        
+        InputStream isImage = this.getClass().getResourceAsStream("/sample-docs/p1.jpg");
         byte[] bytes = IOUtils.toByteArray(isImage);
         BinaryPartAbstractImage newImage
                 = BinaryPartAbstractImage.createImagePart(presentationMLPackage, slidePart, bytes);
@@ -219,7 +197,20 @@ public class PPTXExplorer {
     
     private Object createPicture(String relId) throws Exception
     {
-        return null;
+          java.util.HashMap<String, String>mappings = new java.util.HashMap<String, String>();
+        
+        mappings.put("id1", "4");
+        mappings.put("name", "Picture 3");
+        mappings.put("descr", "embedded.png");
+        mappings.put("rEmbedId", relId );
+        mappings.put("offx", Long.toString(0));
+        mappings.put("offy", Long.toString(0));
+        mappings.put("extcx", Long.toString(7143750));
+        mappings.put("extcy", Long.toString(7143750));
+         String pixTemplate =  
+        XmlUtilities.getStringResource("templates/picElement.xml",this.getClass().getClassLoader());
+        return org.docx4j.XmlUtils.unmarshallFromTemplate(pixTemplate, 
+        		mappings, Context.jcPML, Pic.class ) ;
     }
     
     

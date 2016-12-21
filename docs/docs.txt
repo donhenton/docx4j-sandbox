@@ -7,3 +7,46 @@ http://bridgei2i.com/blog/programmatically-creating-ms-office-compatible-charts/
 
 
 http://www.docx4java.org/forums/docx-java-f6/replace-org-docx4j-wml-text-with-hyperlink-t2273.html
+
+
+ephemeral file system on heroku
+http://stackoverflow.com/questions/18552937/store-file-in-directory-tmp-on-heroku-rails
+
+image creation appears to be at /var/folders/fs/ via 
+org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext |  193 | Creating new Source for file:/var/folders/fs/
+
+++++++++++++++++++++++++++++++++
+NOTES ON PPTX FORMATTING
+this describes a pic
+
+
+<p:pic>
+                <p:nvPicPr>
+                    <p:cNvPr id="4" name="Picture 3" descr="embedded.png"/>
+                    <p:cNvPicPr>
+                        <a:picLocks noChangeAspect="1"/>
+                    </p:cNvPicPr>
+                    <p:nvPr/>
+                </p:nvPicPr>
+                <p:blipFill>
+                    <a:blip r:embed="rId3" cstate="print"/>
+                    <a:stretch>
+                        <a:fillRect/>
+                    </a:stretch>
+                </p:blipFill>
+                <p:spPr>
+                    <a:xfrm>
+                        <a:off x="0" y="0"/>
+                        <a:ext cx="10160000" cy="10160000"/>
+                    </a:xfrm>
+                    <a:prstGeom prst="rect">
+                        <a:avLst/>
+                    </a:prstGeom>
+                </p:spPr>
+            </p:pic>
+
+a:ext is the percentage of the original image 10160000 is (100%)
+
+a:off is offset from the upper left corner of the slide.
+
+a slide is 13.3 in x 7.5 in or (960px x 540px)
