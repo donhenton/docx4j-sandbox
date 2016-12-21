@@ -26,8 +26,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * Generates a powerpoint from a provide set of text substitutions and 
- * image. It templateStream tied to the specific PPTX_TEMPLATE and templateStream not generalizable.
+ * Generates a powerpoint from a provide set of text substitutions and image. It
+ * templateStream tied to the specific PPTX_TEMPLATE and templateStream not
+ * generalizable.
  */
 public class PowerPointGenerator {
 
@@ -36,24 +37,23 @@ public class PowerPointGenerator {
     private static final String PIC_TEMPLATE = "templates/picElement.xml";
 
     /**
-     * 
-     * @param mappings replacement mappings for text replace: "MAIN_TITLE", "MY SLIDES" 
-     * will replace ${MY_TITLE} in the template
+     *
+     * @param mappings replacement mappings for text replace: "MAIN_TITLE", "MY
+     * SLIDES" will replace ${MY_TITLE} in the template
      * @param isImage The input stream of the image to insert
-     * @param outStream target output stream, could be a ByteArrayOutputStream for downloading
-     * @param imageSuffix what kind of image we are sending  by suffix: 'jpg'
+     * @param outStream target output stream, could be a ByteArrayOutputStream
+     * for downloading
+     * @param imageSuffix what kind of image we are sending by suffix: 'jpg'
      * 'png'
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     public void generate(HashMap<String, String> mappings, InputStream isImage, OutputStream outStream, String imageSuffix) throws Exception {
 
         InputStream templateStream = this.getClass().getResourceAsStream(PPTX_TEMPLATE);
 
-        isImage.mark(0);
-        Dimension imgDim = getImgDimension(isImage,imageSuffix);
-        isImage.reset();
-       // LOG.debug("dim " + imgDim);
+
+        Dimension imgDim = getImgDimension(isImage, imageSuffix);
         if (templateStream == null) {
             throw new RuntimeException("can't find template file " + PPTX_TEMPLATE);
         }
@@ -79,7 +79,7 @@ public class PowerPointGenerator {
         BinaryPartAbstractImage newImage
                 = BinaryPartAbstractImage.createImagePart(presentationMLPackage, slidePart1, bytes);
 
-        contents.add(1, createPicture(newImage.getSourceRelationships().get(0).getId(),imgDim));
+        contents.add(1, createPicture(newImage.getSourceRelationships().get(0).getId(), imgDim));
         slidePart1.variableReplace(mappings);
 
         presentationMLPackage.save(outStream);
@@ -88,13 +88,15 @@ public class PowerPointGenerator {
 
     /**
      * get image dimensions
-     * @param is
+     *
+     * @param imageStream
      * @param suffix
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
-    private static Dimension getImgDimension(InputStream is,String suffix) throws IOException {
-        ImageInputStream stream = ImageIO.createImageInputStream(is);
+    private static Dimension getImgDimension(InputStream imageStream, String suffix) throws IOException {
+        imageStream.mark(0);
+        ImageInputStream stream = ImageIO.createImageInputStream(imageStream);
         Iterator<ImageReader> iter = ImageIO.getImageReadersBySuffix(suffix);
 
         while (iter.hasNext()) {
@@ -108,6 +110,7 @@ public class PowerPointGenerator {
 
             } finally {
                 reader.dispose();
+                imageStream.reset();
             }
         }
 
@@ -115,19 +118,19 @@ public class PowerPointGenerator {
     }
 
     /**
-     * create the xml Pic object that will be inserted into the  PPTX 
-     * structure
+     * create the xml Pic object that will be inserted into the PPTX structure
+     *
      * @param relId
      * @param imgDim
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
-    private Object createPicture(String relId,Dimension imgDim) throws Exception {
+    private Object createPicture(String relId, Dimension imgDim) throws Exception {
         java.util.HashMap<String, String> mappings = new java.util.HashMap<String, String>();
 
-        OffsetAdjuster oA = new OffsetAdjuster(imgDim,25.0f);
-        LOG.debug("oa "+oA.toString());
-        
+        OffsetAdjuster oA = new OffsetAdjuster(imgDim, 25.0f);
+       // LOG.debug("oa " + oA.toString());
+
         mappings.put("id1", "4");
         mappings.put("name", "Picture 3");
         mappings.put("descr", "embedded.png");
@@ -136,7 +139,6 @@ public class PowerPointGenerator {
         mappings.put("offy", oA.getOffsetY());
         mappings.put("extcx", oA.getExtcX());//50% templateStream 5000000
         mappings.put("extcy", oA.getExtcY());
-
 
         String pixTemplate
                 = XmlUtilities.getStringResource(PIC_TEMPLATE, this.getClass().getClassLoader());
@@ -156,7 +158,7 @@ public class PowerPointGenerator {
             FileOutputStream fOut = new FileOutputStream(System.getProperty("user.dir") + "/docs/out/sub200.pptx", false);
             PowerPointGenerator gen = new PowerPointGenerator();
 
-            gen.generate(mappings, isImage, fOut,"jpg");
+            gen.generate(mappings, isImage, fOut, "jpg");
         } catch (Exception ex) {
             LOG.error("General error in main", ex);
         }
