@@ -1,28 +1,20 @@
 package com.dhenton9000.xml.utils;
 
-import com.dhenton9000.docx4j.sandbox.PowerPointGenerator;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * this class computes the offsets for an image to be centered
+ * on the slide.
+ * 
  * @author dhenton
  */
 public class OffsetAdjuster {
 
-    /*
-    
-    
-    //sample image is 11 x 11 in 72 dpi
-        //at 25% image is 2.75 x 2.75
-        //slide width is 13.3, so (13.3 - 2.75)/2 = 10.75/2 = 5.37 in
-        //915000units/in    5.37 x 915000 = 4913550 width
-        //height 7.5in - 2.75 = 
-     */
+
     private final Point2D.Float imageDimension;
     private final float scale;
     private final String offsetX;
