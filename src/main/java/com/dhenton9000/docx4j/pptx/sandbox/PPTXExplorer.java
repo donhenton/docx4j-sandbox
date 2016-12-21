@@ -12,10 +12,7 @@ import org.pptx4j.pml.Shape;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import javax.xml.bind.JAXBException;
-import org.apache.commons.io.IOUtils;
 import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.contenttype.ContentTypeManager;
 import org.docx4j.openpackaging.contenttype.ContentTypes;
@@ -28,10 +25,8 @@ import org.docx4j.openpackaging.parts.PresentationML.MainPresentationPart;
 import org.docx4j.openpackaging.parts.PresentationML.SlideLayoutPart;
 import org.docx4j.openpackaging.parts.PresentationML.SlidePart;
 import org.docx4j.openpackaging.packages.OpcPackage;
-import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
 import org.pptx4j.Pptx4jException;
 import org.pptx4j.jaxb.Context;
-import org.pptx4j.pml.Pic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,64 +44,7 @@ public class PPTXExplorer {
 
         //simpleCreate();
         PPTXExplorer p = new PPTXExplorer();
-       p.replaceImage();
-      // p.getXML();
-
-    }
-    
-    private void getXML() throws Exception
-    {
-        
-        
-        String SAMPLE_PICTURE =  
-        XmlUtilities.getStringResource("templates/picElement.xml",this.getClass().getClassLoader());
-        //Document doc = XmlUtilities.stringToDoc(SAMPLE_PICTURE);
-        //String ii = XmlUtilities.docToString(doc, true,true);
-        LOG.debug("\n\n"+SAMPLE_PICTURE+"\n\n");
-        
-    }
-
-    private void replaceImage() throws Exception {
-
-        InputStream is = this.getClass().getResourceAsStream("/sample-docs/substitution_sample.pptx");
-        if (is == null) {
-            throw new RuntimeException("can't find file");
-        }
-        PresentationMLPackage presentationMLPackage
-                = (PresentationMLPackage) OpcPackage.load(is, Filetype.ZippedPackage);
-        SlidePart slidePart0 = presentationMLPackage.getMainPresentationPart().getSlide(0);
-        SlidePart slidePart1 = presentationMLPackage.getMainPresentationPart().getSlide(1);
-        List<Object> contents = slidePart1.getContents().getCSld().getSpTree().getSpOrGrpSpOrGraphicFrame();
-        Iterator partIter = contents.iterator();
-        
-        
-         HashMap<String, String> mappings = new HashMap<String, String>();
-        mappings.put("MAIN_TITLE", "DON'T GET A JOB!!!!!");
-        mappings.put("SUB_TITLE", "Hang out at Bob's!!!!!");
-        mappings.put("IMAGE_TITLE", "Meet the New Boss");
-        mappings.put("IMAGE_TEXT", "Same as the Old Boss");
-        //
-        slidePart0.variableReplace(mappings);
-        while (partIter.hasNext()) {
-
-            Object i = partIter.next();
-           // LOG.debug(i.getClass().getName());
-            if (i instanceof Pic) {
-                partIter.remove();
-            }
-        }
-        
-        InputStream isImage = this.getClass().getResourceAsStream("/sample-docs/p1.jpg");
-        byte[] bytes = IOUtils.toByteArray(isImage);
-        BinaryPartAbstractImage newImage
-                = BinaryPartAbstractImage.createImagePart(presentationMLPackage, slidePart1, bytes);
-
-        contents.add(1, createPicture(newImage.getSourceRelationships().get(0).getId()));
-        //String xml = slidePart1.getXML();
-        //LOG.debug(xml);
-        slidePart1.variableReplace(mappings);
-        File f = new File(System.getProperty("user.dir") + "/docs/out/sub.pptx");
-        presentationMLPackage.save(f);
+        p.replaceText();
 
     }
 
@@ -200,37 +138,5 @@ public class PPTXExplorer {
 
         System.out.println("\n\n done .. saved " + outputfilepath);
     }
-    
-    
-    
-    private Object createPicture(String relId) throws Exception
-    {
-          java.util.HashMap<String, String>mappings = new java.util.HashMap<String, String>();
-        
-        mappings.put("id1", "4");
-        mappings.put("name", "Picture 3");
-        mappings.put("descr", "embedded.png");
-        mappings.put("rEmbedId", relId );
-        mappings.put("offx", Long.toString(4913550));
-        mappings.put("offy", Long.toString(2173125));
-        mappings.put("extcx", Long.toString(2500000));//50% is 5000000
-        mappings.put("extcy", Long.toString(2500000));
-        
-        //sample image is 11 x 11 in 72 dpi
-        //at 25% image is 2.75 x 2.75
-        //slide width is 13.3, so (13.3 - 2.75)/2 = 10.75/2 = 5.37 in
-        //915000units/in    5.37 x 915000 = 4913550 width
-        
-        //height 7.5in - 2.75 = 
-        
-        
-        
-        
-         String pixTemplate =  
-        XmlUtilities.getStringResource("templates/picElement.xml",this.getClass().getClassLoader());
-        return org.docx4j.XmlUtils.unmarshallFromTemplate(pixTemplate, 
-        		mappings, Context.jcPML, Pic.class ) ;
-    }
-    
-    
+
 }
