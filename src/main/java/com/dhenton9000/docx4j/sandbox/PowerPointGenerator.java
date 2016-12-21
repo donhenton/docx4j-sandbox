@@ -26,7 +26,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author dhenton
+ * Generates a powerpoint from a provide set of text substitutions and 
+ * image. It templateStream tied to the specific PPTX_TEMPLATE and templateStream not generalizable.
  */
 public class PowerPointGenerator {
 
@@ -34,19 +35,30 @@ public class PowerPointGenerator {
     private static final String PPTX_TEMPLATE = "/sample-docs/substitution_sample.pptx";
     private static final String PIC_TEMPLATE = "templates/picElement.xml";
 
+    /**
+     * 
+     * @param mappings replacement mappings for text replace: "MAIN_TITLE", "MY SLIDES" 
+     * will replace ${MY_TITLE} in the template
+     * @param isImage The input stream of the image to insert
+     * @param outStream target output stream, could be a ByteArrayOutputStream for downloading
+     * @param imageSuffix what kind of image we are sending  by suffix: 'jpg'
+     * 'png'
+     * 
+     * @throws Exception 
+     */
     public void generate(HashMap<String, String> mappings, InputStream isImage, OutputStream outStream, String imageSuffix) throws Exception {
 
-        InputStream is = this.getClass().getResourceAsStream(PPTX_TEMPLATE);
+        InputStream templateStream = this.getClass().getResourceAsStream(PPTX_TEMPLATE);
 
         isImage.mark(0);
         Dimension imgDim = getImgDimension(isImage,imageSuffix);
         isImage.reset();
-        LOG.debug("dim " + imgDim);
-        if (is == null) {
+       // LOG.debug("dim " + imgDim);
+        if (templateStream == null) {
             throw new RuntimeException("can't find template file " + PPTX_TEMPLATE);
         }
         PresentationMLPackage presentationMLPackage
-                = (PresentationMLPackage) OpcPackage.load(is, Filetype.ZippedPackage);
+                = (PresentationMLPackage) OpcPackage.load(templateStream, Filetype.ZippedPackage);
         SlidePart slidePart0 = presentationMLPackage.getMainPresentationPart().getSlide(0);
         SlidePart slidePart1 = presentationMLPackage.getMainPresentationPart().getSlide(1);
         List<Object> contents = slidePart1.getContents().getCSld().getSpTree().getSpOrGrpSpOrGraphicFrame();
@@ -68,8 +80,6 @@ public class PowerPointGenerator {
                 = BinaryPartAbstractImage.createImagePart(presentationMLPackage, slidePart1, bytes);
 
         contents.add(1, createPicture(newImage.getSourceRelationships().get(0).getId(),imgDim));
-        //String xml = slidePart1.getXML();
-        //LOG.debug(xml);
         slidePart1.variableReplace(mappings);
 
         presentationMLPackage.save(outStream);
@@ -111,7 +121,7 @@ public class PowerPointGenerator {
         mappings.put("rEmbedId", relId);
         mappings.put("offx", oA.getOffsetX());
         mappings.put("offy", oA.getOffsetY());
-        mappings.put("extcx", oA.getExtcX());//50% is 5000000
+        mappings.put("extcx", oA.getExtcX());//50% templateStream 5000000
         mappings.put("extcy", oA.getExtcY());
 
 
