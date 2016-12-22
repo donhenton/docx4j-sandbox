@@ -34,7 +34,7 @@ public class PowerPointGenerator {
 
     private static Logger LOG = LoggerFactory.getLogger(PowerPointGenerator.class);
     private static final String PPTX_TEMPLATE = "/sample-docs/substitution_sample.pptx";
-    private static final String PIC_TEMPLATE = "templates/picElement.xml";
+    private static final String PIC_TEMPLATE = "part_templates/picElement.xml";
 
     /**
      *
