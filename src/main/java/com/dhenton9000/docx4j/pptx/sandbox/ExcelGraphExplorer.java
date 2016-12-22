@@ -7,18 +7,24 @@ package com.dhenton9000.docx4j.pptx.sandbox;
 
 import com.dhenton9000.docx4j.sandbox.SlideUtils;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.xml.bind.JAXBException;
+import org.docx4j.dml.chart.CTNumData;
+import org.docx4j.dml.chart.CTNumDataSource;
+import org.docx4j.dml.chart.CTNumRef;
+import org.docx4j.dml.chart.CTNumVal;
+import org.docx4j.dml.chart.CTPieChart;
+import org.docx4j.dml.chart.CTPieSer;
+
 import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.Filetype;
 import org.docx4j.openpackaging.packages.OpcPackage;
 import org.docx4j.openpackaging.packages.PresentationMLPackage;
 import org.docx4j.openpackaging.packages.SpreadsheetMLPackage;
+import org.docx4j.openpackaging.parts.DrawingML.Chart;
+import org.docx4j.openpackaging.parts.Part;
 import org.docx4j.openpackaging.parts.PartName;
 import org.docx4j.openpackaging.parts.PresentationML.MainPresentationPart;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
@@ -28,18 +34,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlsx4j.sml.Row;
 import org.docx4j.openpackaging.parts.SpreadsheetML.SharedStrings;
+import org.xlsx4j.sml.STCellType;
 
 /**
  * http://bridgei2i.com/blog/programmatically-creating-ms-office-compatible-charts/
  * https://github.com/plutext/docx4j/blob/master/src/samples/pptx4j/org/pptx4j/samples/EditEmbeddedCharts.java
  * http://stackoverflow.com/questions/30556157/printing-contents-of-xlsx-sheet
+ * https://github.com/plutext/docx4j/blob/master/src/samples/pptx4j/org/pptx4j/samples/EditEmbeddedCharts.java
  * (use of shared string for xlsx text cells)
  *
  * @author dhenton
  */
 public class ExcelGraphExplorer {
 
-    protected static Logger LOG = LoggerFactory.getLogger(PPTXExplorer.class);
+    protected static Logger LOG = LoggerFactory.getLogger(ExcelGraphExplorer.class);
 
     private static boolean MACRO_ENABLE = false;
 
@@ -47,7 +55,33 @@ public class ExcelGraphExplorer {
 
         //simpleCreate();
         ExcelGraphExplorer p = new ExcelGraphExplorer();
-        p.addSlide();
+        p.findChartStrRef();
+
+    }
+
+    public void findChartStrRef() throws Exception {
+
+        InputStream is = this.getClass().getResourceAsStream("/sample-docs/graph_with_chart.pptx");
+        if (is == null) {
+            throw new RuntimeException("can't find file");
+        }
+        PresentationMLPackage presentationMLPackage
+                = (PresentationMLPackage) OpcPackage.load(is, Filetype.ZippedPackage);
+
+        MainPresentationPart pp = (MainPresentationPart) presentationMLPackage
+                .getParts().getParts().get(new PartName("/ppt/presentation.xml"));
+
+        Chart chart = (Chart) presentationMLPackage.getParts().get(new PartName("/ppt/charts/chart1.xml"));
+      //  LOG.debug(chart.toString());
+      //  LOG.debug(chart.getContents().getChart().toString());
+        CTPieChart pieChart = (CTPieChart) chart.getContents().getChart().getPlotArea().getAreaChartOrArea3DChartOrLineChart().get(0);
+
+        CTNumData pieSeriesValues = pieChart.getSer().get(0).getVal().getNumRef().getNumCache();
+        pieSeriesValues.getPt().forEach((CTNumVal d) -> {
+
+            LOG.debug(String.format("index %d value %s", d.getIdx(), d.getV()));
+
+        });
 
     }
 
@@ -68,7 +102,7 @@ public class ExcelGraphExplorer {
 
     }
 
-    public void createGraph() throws Docx4JException, IOException, InvalidFormatException, JAXBException {
+    public void readCells() throws Exception {
         String templateFile = "";
 
         InputStream is = this.getClass().getResourceAsStream("/sample-docs/graph_with_chart.pptx");
@@ -110,8 +144,7 @@ public class ExcelGraphExplorer {
             return e.getValue();
         }).collect(Collectors.toList()).get(0);
 
-        LOG.debug("shared " + sharedStrings.toString());
-
+        // LOG.debug("shared " + sharedStrings.toString());
         List<Row> rows = originalRows.stream().filter(row -> {
             return row.getC().size() > 0;
         }).map(row -> {
@@ -122,43 +155,23 @@ public class ExcelGraphExplorer {
 
         rows.forEach(row -> {
             row.getC().forEach(cell -> {
+                try {
+                    String output = "not found";
+                    if (cell.getT().equals(STCellType.S)) {
 
-                LOG.debug(String.format("row %s col %s value %s  type %s", row.getR() + "", cell.getR(), cell.getV(), cell.getT().toString()));
+                        output = sharedStrings.getContents().getSi().get(Integer.parseInt(cell.getV())).getT().getValue();
 
+                    } else {
+                        output = cell.getV();
+                    }
+
+                    LOG.debug(String.format("col %s value %s", cell.getR(), output));
+                } catch (Docx4JException ex) {
+                    throw new RuntimeException(ex);
+                }
             });
 
         });
-
-        //LOG.debug(spreadsheetPart.getPackage().getParts().getPart());
-//        spreadsheetPart.getPackage().getParts().getParts().forEach((key,  value)->{
-//            
-//           LOG.debug(String.format("key %s part Name %s", key,value.getPartName()) );
-//
-//            
-//       }) ;
-//        SlideLayoutPart layoutPart = (SlideLayoutPart) presentationMLPackage.getParts().getParts()
-//                .get(new PartName("/ppt/slideLayouts/slideLayout2.xml"));
-//        String slideIndex = "2";
-//
-//        SlidePart slide1 = PresentationMLPackage.createSlidePart(pp, layoutPart,
-//                new PartName("/ppt/slides/slide" + slideIndex + ".xml"));
-//        StringBuilder slideXMLBuffer = new StringBuilder();
-//        BufferedReader br = null;
-//        String line = "";
-//        String slideDataXmlFile = "/part_templates/slide_part.xml";
-//        InputStream in = this.getClass().getResourceAsStream(slideDataXmlFile);
-//        Reader fr = new InputStreamReader(in, "utf-8");
-//        br = new BufferedReader(fr);
-//        while ((line = br.readLine()) != null) {
-//            slideXMLBuffer.append(line);
-//            slideXMLBuffer.append(" ");
-//        }
-//        Sld sld = (Sld) XmlUtils.unmarshalString(slideXMLBuffer.toString(), Context.jcPML,
-//                Sld.class);
-//        slide1.setJaxbElement(sld);
-        ////////////////do the save
-        //File f = new File(System.getProperty("user.dir") + "/docs/out/graph_demo.pptx");
-        //presentationMLPackage.save(f);
     }
 
 }
