@@ -9,6 +9,7 @@ import com.dhenton9000.docx4j.sandbox.SlideUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
@@ -31,7 +32,8 @@ import org.docx4j.openpackaging.parts.SpreadsheetML.SharedStrings;
 /**
  * http://bridgei2i.com/blog/programmatically-creating-ms-office-compatible-charts/
  * https://github.com/plutext/docx4j/blob/master/src/samples/pptx4j/org/pptx4j/samples/EditEmbeddedCharts.java
- * http://stackoverflow.com/questions/30556157/printing-contents-of-xlsx-sheet (use of shared string for xlsx text cells)
+ * http://stackoverflow.com/questions/30556157/printing-contents-of-xlsx-sheet
+ * (use of shared string for xlsx text cells)
  *
  * @author dhenton
  */
@@ -48,21 +50,22 @@ public class ExcelGraphExplorer {
         p.addSlide();
 
     }
-    
-    public void addSlide() throws Exception
-    { 
-        
+
+    public void addSlide() throws Exception {
+
         InputStream is = this.getClass().getResourceAsStream("/sample-docs/graph_sample.pptx");
         if (is == null) {
             throw new RuntimeException("can't find file");
         }
         PresentationMLPackage presentationMLPackage
                 = (PresentationMLPackage) OpcPackage.load(is, Filetype.ZippedPackage);
-        
-        SlideUtils.insertSlide(presentationMLPackage,2);
+        HashMap<String, String> mappings = new HashMap<String, String>();
+        mappings.put("GRAPH_TITLE", "DON'T GET A JOB!!!!!");
+        mappings.put("MAIN_TEXT", "Hang out at Bob's!!!!!");
+        SlideUtils.appendSlide(presentationMLPackage, mappings);
         File f = new File(System.getProperty("user.dir") + "/docs/out/graph_demo.pptx");
         presentationMLPackage.save(f);
-        
+
     }
 
     public void createGraph() throws Docx4JException, IOException, InvalidFormatException, JAXBException {
@@ -99,21 +102,19 @@ public class ExcelGraphExplorer {
             return e.getValue();
         }).collect(Collectors.toList()).get(0);
         List<Row> originalRows = worksheetPart.getContents().getSheetData().getRow();
-        
-        
-        SharedStrings sharedStrings =(SharedStrings) spreadSheet.getParts().getParts().entrySet().stream().filter(entryPart -> {
+
+        SharedStrings sharedStrings = (SharedStrings) spreadSheet.getParts().getParts().entrySet().stream().filter(entryPart -> {
             return entryPart.getValue() instanceof SharedStrings;
 
         }).map(e -> {
             return e.getValue();
         }).collect(Collectors.toList()).get(0);
-        
-        LOG.debug("shared "+sharedStrings.toString());
+
+        LOG.debug("shared " + sharedStrings.toString());
 
         List<Row> rows = originalRows.stream().filter(row -> {
             return row.getC().size() > 0;
         }).map(row -> {
- 
 
             // LOG.debug(row.getC().size()+"");
             return row;
