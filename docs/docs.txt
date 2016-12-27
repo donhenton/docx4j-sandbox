@@ -50,3 +50,9 @@ a:ext is the percentage of the original image 10160000 is (100%)
 a:off is offset from the upper left corner of the slide.
 
 a slide is 13.3 in x 7.5 in or (960px x 540px)
+
+
+
+/////////////batik////////////////////////////////////////////////
+http://xmlgraphics.apache.org/batik/using/transcoder.html#genImagefromSVGDOM
+http://stackoverflow.com/questions/2369779/get-empty-image-when-transcoding-svg-to-png?rq=1
