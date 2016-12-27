@@ -5,24 +5,16 @@
  */
 package com.dhenton9000.batik.sandbox;
 
-import com.dhenton9000.xml.utils.ReplaceFilterInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.JPEGTranscoder;
-import org.apache.batik.util.XMLResourceDescriptor;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import java.io.File;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -37,40 +29,31 @@ public class BatikExplorer {
         //simpleCreate();
         BatikExplorer p = new BatikExplorer();
         try {
-            p.exploreBatik();
+            p.testOutBatikTranscoder();
             LOG.info("done");
             System.exit(0);
         } catch (Exception e) {
             LOG.error("MAIN ERROR: " + e.getMessage() + "\n", e);
         }
     }
-
-    private void exploreBatik() throws Exception {
-
-        Document document = loadDocument();
-        save(document);
-        
-
-    }
-
-    public InputStream addNS(InputStream docText) {
-        Map<byte[], byte[]> rawReplacements = new HashMap<byte[], byte[]>();
-        rawReplacements.put("<svg".getBytes(), ("<svg xmlns=\"" + SVGDOMImplementation.SVG_NAMESPACE_URI + "\"").getBytes());
-        LOG.debug("added namespace");
-        return new ReplaceFilterInputStream(docText, rawReplacements);
-
-    }
-
-    public Document loadDocument() throws Exception {
-        LOG.debug("loading document");
+    
+    
+    
+    private void testOutBatikTranscoder() throws Exception 
+    {
         InputStream docStream = this.getClass().getResourceAsStream("/sample-docs/sample.svg");
-        docStream = addNS(docStream);
-        String parser = XMLResourceDescriptor.getXMLParserClassName();
-        SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(parser);
-
-        return factory.createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, docStream);
+        String svgInput = IOUtils.toString(docStream);
+        
+        D3GraphBatikTransCoder tCoder = new D3GraphBatikTransCoder();
+        byte[] imageData =  tCoder.loadDocument(svgInput);
+        File f = new File(System.getProperty("user.dir") + "/docs/out/batik_out.jpg");
+        FileUtils.writeByteArrayToFile(f,imageData);
+        
+        
     }
 
+   
+ 
     public Document createDocument() {
 
         // Create a new document.
@@ -102,37 +85,6 @@ public class BatikExplorer {
         return document;
     }
 
-    public void save(Document document) throws Exception {
-
-        // Create a JPEGTranscoder and set its quality hint.
-        JPEGTranscoder t = new JPEGTranscoder();
-        t.addTranscodingHint(JPEGTranscoder.KEY_QUALITY,
-                new Float(.8));
-
-        // Set the transcoder input and output.
-        TranscoderInput input = new TranscoderInput(document);
-        try (OutputStream ostream = new FileOutputStream("out.jpg")) {
-            TranscoderOutput output = new TranscoderOutput(ostream);
-
-            // Perform the transcoding.
-            t.transcode(input, output);
-            ostream.flush();
-        }
-
-    }
-
-// 
-//    
-//      public byte[] svgToPNG(String svg) throws TranscoderException {
-//        TranscoderInput transcoderInput = new TranscoderInput(new StringReader(svg));
-//        ByteArrayOutputStream output = new ByteArrayOutputStream();
-//        TranscoderOutput transcoderOutput = new TranscoderOutput(output);
-//        PNGTranscoder pngTranscoder = new PNGTranscoder();
-//       
-//            pngTranscoder.transcode(transcoderInput, transcoderOutput);
-//         
-//
-//
-//        return output.toByteArray();
-//    }
+     
+ 
 }
