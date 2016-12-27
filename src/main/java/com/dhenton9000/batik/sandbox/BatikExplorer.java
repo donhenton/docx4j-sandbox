@@ -5,6 +5,8 @@
  */
 package com.dhenton9000.batik.sandbox;
 
+import com.dhenton9000.docx4j.sandbox.PowerPointGenerator;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.commons.io.IOUtils;
@@ -14,6 +16,10 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.OutputStream;
+import java.util.HashMap;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -36,24 +42,51 @@ public class BatikExplorer {
             LOG.error("MAIN ERROR: " + e.getMessage() + "\n", e);
         }
     }
-    
-    
-    
-    private void testOutBatikTranscoder() throws Exception 
-    {
+
+    private void testOutBatikTranscoder() throws Exception {
+
         InputStream docStream = this.getClass().getResourceAsStream("/sample-docs/sample.svg");
         String svgInput = IOUtils.toString(docStream);
-        
+
         D3GraphBatikTransCoder tCoder = new D3GraphBatikTransCoder();
-        byte[] imageData =  tCoder.loadDocument(svgInput);
+        InputStream isImage = tCoder.loadDocument(svgInput);
+
         File f = new File(System.getProperty("user.dir") + "/docs/out/batik_out.jpg");
-        FileUtils.writeByteArrayToFile(f,imageData);
-        
-        
+        OutputStream outputStream = new FileOutputStream(f);
+
+        int read = 0;
+        byte[] bytes = new byte[1024];
+
+        while ((read = isImage.read(bytes)) != -1) {
+            outputStream.write(bytes, 0, read);
+        }
+
     }
 
-   
- 
+    private void testOutPPTX() throws Exception {
+
+        HashMap<String, String> mappings = new HashMap<String, String>();
+        mappings.put("MAIN_TITLE", "DON'T GET A JOB!!!!!");
+        mappings.put("SUB_TITLE", "Hang out at Bob's!!!!!");
+        mappings.put("IMAGE_TITLE", "Meet the New Boss");
+        mappings.put("IMAGE_TEXT", "Same as the Old Boss");
+        try {
+            InputStream docStream = this.getClass().getResourceAsStream("/sample-docs/sample.svg");
+            String svgInput = IOUtils.toString(docStream);
+
+            D3GraphBatikTransCoder tCoder = new D3GraphBatikTransCoder();
+            InputStream isImage = tCoder.loadDocument(svgInput);
+
+            FileOutputStream fOut = new FileOutputStream(System.getProperty("user.dir") + "/docs/out/svgPresenation.pptx", false);
+            PowerPointGenerator gen = new PowerPointGenerator();
+
+            gen.generate(mappings, isImage, fOut, "jpg");
+        } catch (Exception ex) {
+            LOG.error("General error in main", ex);
+        }
+
+    }
+
     public Document createDocument() {
 
         // Create a new document.
@@ -85,6 +118,4 @@ public class BatikExplorer {
         return document;
     }
 
-     
- 
 }

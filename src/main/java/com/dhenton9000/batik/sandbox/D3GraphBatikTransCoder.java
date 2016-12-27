@@ -55,7 +55,7 @@ public class D3GraphBatikTransCoder {
      * @return a byte[] that contains the jpeg data.
      * @throws Exception 
      */
-    public byte[] loadDocument(String svgString) throws Exception {
+    public ByteArrayInputStream loadDocument(String svgString) throws Exception {
         LOG.debug("loading document ");
         InputStream docStream = new ByteArrayInputStream(svgString.getBytes("UTF-8"));
         docStream = addNS(docStream);
@@ -75,8 +75,8 @@ public class D3GraphBatikTransCoder {
 
         // Perform the transcoding.
         t.transcode(input, output);
-
-        return ostream.toByteArray();
+        return new ByteArrayInputStream(ostream.toByteArray());
+        
 
     }
 
