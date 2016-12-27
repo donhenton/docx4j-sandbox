@@ -5,10 +5,13 @@
  */
 package com.dhenton9000.batik.sandbox;
 
+import com.dhenton9000.xml.utils.ReplaceFilterInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -35,24 +38,33 @@ public class BatikExplorer {
         BatikExplorer p = new BatikExplorer();
         try {
             p.exploreBatik();
-        } catch (Exception e) {
-            LOG.error("ERROR: " + e.getMessage(), e);
-        }
-    }
-
-    private void exploreBatik() throws Exception {
-        try {
-            Document document = loadDocument();
-            save(document);
+            LOG.info("done");
             System.exit(0);
         } catch (Exception e) {
             LOG.error("MAIN ERROR: " + e.getMessage() + "\n", e);
         }
     }
 
+    private void exploreBatik() throws Exception {
+
+        Document document = loadDocument();
+        save(document);
+        
+
+    }
+
+    public InputStream addNS(InputStream docText) {
+        Map<byte[], byte[]> rawReplacements = new HashMap<byte[], byte[]>();
+        rawReplacements.put("<svg".getBytes(), ("<svg xmlns=\"" + SVGDOMImplementation.SVG_NAMESPACE_URI + "\"").getBytes());
+        LOG.debug("added namespace");
+        return new ReplaceFilterInputStream(docText, rawReplacements);
+
+    }
+
     public Document loadDocument() throws Exception {
+        LOG.debug("loading document");
         InputStream docStream = this.getClass().getResourceAsStream("/sample-docs/sample.svg");
-        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
+        docStream = addNS(docStream);
         String parser = XMLResourceDescriptor.getXMLParserClassName();
         SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(parser);
 
