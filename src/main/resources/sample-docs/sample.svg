@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg">
+<svg id="bar1" width="860" height="210" style="background-color: green border: thin solid black; padding: 5px;">
     <defs>
         <pattern height="4" id="diagonalStripes"
             patternUnits="userSpaceOnUse" width="4">
