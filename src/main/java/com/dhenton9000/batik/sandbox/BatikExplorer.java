@@ -5,16 +5,12 @@
  */
 package com.dhenton9000.batik.sandbox;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.io.StringReader;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.JPEGTranscoder;
-import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
