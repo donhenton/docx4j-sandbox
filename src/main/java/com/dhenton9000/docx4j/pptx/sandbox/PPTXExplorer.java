@@ -5,7 +5,6 @@
  */
 package com.dhenton9000.docx4j.pptx.sandbox;
 
-import com.dhenton9000.xml.utils.XmlUtilities;
 import java.io.File;
 import java.io.InputStream;
 import org.pptx4j.pml.Shape;

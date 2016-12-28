@@ -35,6 +35,7 @@ public class PowerPointGenerator {
     private static Logger LOG = LoggerFactory.getLogger(PowerPointGenerator.class);
     private static final String PPTX_TEMPLATE = "/sample-docs/substitution_sample.pptx";
     private static final String PIC_TEMPLATE = "part_templates/picElement.xml";
+    public static final String IMAGE_SUFFIX = "png";
 
     /**
      *
@@ -43,18 +44,16 @@ public class PowerPointGenerator {
      * @param isImage The input stream of the image to insert
      * @param outStream target output stream, could be a ByteArrayOutputStream
      * for downloading
-     * @param imageSuffix what kind of image we are sending by suffix: 'jpg'
-     * 'png'
      * @param scalePercent percent to scale the image eg 25.0f;
      *
      * @throws Exception
      */
-    public void generate(HashMap<String, String> mappings, InputStream isImage, OutputStream outStream, String imageSuffix,float scalePercent) throws Exception {
+    public void generate(HashMap<String, String> mappings, InputStream isImage, OutputStream outStream,  float scalePercent) throws Exception {
 
         InputStream templateStream = this.getClass().getResourceAsStream(PPTX_TEMPLATE);
 
 
-        Dimension imgDim = getImgDimension(isImage, imageSuffix);
+        Dimension imgDim = getImgDimension(isImage);
         if (templateStream == null) {
             throw new RuntimeException("can't find template file " + PPTX_TEMPLATE);
         }
@@ -95,10 +94,10 @@ public class PowerPointGenerator {
      * @return
      * @throws IOException
      */
-    private static Dimension getImgDimension(InputStream imageStream, String suffix) throws IOException {
+    private static Dimension getImgDimension(InputStream imageStream) throws IOException {
         imageStream.mark(0);
         ImageInputStream stream = ImageIO.createImageInputStream(imageStream);
-        Iterator<ImageReader> iter = ImageIO.getImageReadersBySuffix(suffix);
+        Iterator<ImageReader> iter = ImageIO.getImageReadersBySuffix(IMAGE_SUFFIX);
 
         while (iter.hasNext()) {
             ImageReader reader = iter.next();
@@ -161,7 +160,7 @@ public class PowerPointGenerator {
             FileOutputStream fOut = new FileOutputStream(System.getProperty("user.dir") + "/docs/out/sub200.pptx", false);
             PowerPointGenerator gen = new PowerPointGenerator();
 
-            gen.generate(mappings, isImage, fOut, "jpg",33.0f);
+            gen.generate(mappings, isImage, fOut, 33.0f);
         } catch (Exception ex) {
             LOG.error("General error in main", ex);
         }

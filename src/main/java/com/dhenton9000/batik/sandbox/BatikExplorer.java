@@ -49,7 +49,7 @@ public class BatikExplorer {
         D3GraphBatikTransCoder tCoder = new D3GraphBatikTransCoder(svgInput);
         InputStream isImage = tCoder.getDocument();
 
-        File f = new File(System.getProperty("user.dir") + "/docs/out/batik_out.jpg");
+        File f = new File(System.getProperty("user.dir") + "/docs/out/batik_out.png");
         OutputStream outputStream = new FileOutputStream(f);
 
         int read = 0;
@@ -67,7 +67,7 @@ public class BatikExplorer {
         mappings.put("MAIN_TITLE", "DON'T GET A JOB!!!!!");
         mappings.put("SUB_TITLE", "Hang out at Bob's!!!!!");
         mappings.put("IMAGE_TITLE", "Meet the New Boss");
-        mappings.put("IMAGE_TEXT", "Same as the Old Boss");
+        mappings.put("IMAGE_TEXT", "Same as the Old Bosszzzzzz");
         try {
             InputStream docStream = this.getClass().getResourceAsStream("/sample-docs/sample.svg");
             String svgInput = IOUtils.toString(docStream);
@@ -78,7 +78,7 @@ public class BatikExplorer {
             FileOutputStream fOut = new FileOutputStream(System.getProperty("user.dir") + "/docs/out/svgPresenation.pptx", false);
             PowerPointGenerator gen = new PowerPointGenerator();
 
-            gen.generate(mappings, isImage, fOut, "jpg",75.0f);
+            gen.generate(mappings, isImage, fOut, 75.0f);
         } catch (Exception ex) {
             LOG.error("General error in main", ex);
         }
