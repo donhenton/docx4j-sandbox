@@ -10,6 +10,18 @@ import org.slf4j.LoggerFactory;
  * this class computes the offsets for an image to be centered
  * on the slide.
  * 
+             <p:spPr>
+                    <a:xfrm>
+                        <a:off x="4281437" y="2990906"/>
+                        <a:ext cx="10922000" cy="2667000"/>
+                    </a:xfrm>
+                    <a:prstGeom prst="rect">
+                        <a:avLst/>
+                    </a:prstGeom>
+                </p:spPr>
+ * 
+ * 
+ * 
  * @author dhenton
  */
 public class OffsetAdjuster {
@@ -45,9 +57,15 @@ public class OffsetAdjuster {
         double hCalc = (PPTX_HEIGHT_IN - this.imageDimension.getY())/2;
         this.offsetY = Long.toString((long) Math.floor(hCalc * UNITS_PER_IN)); 
         //2500000 is 25%
-        Long extLong = new Float(scaleAsPercent).longValue() * 100000;
-        this.extcX = extLong.toString();
-        this.extcY = this.extcX;
+       // Long extLong = new Float(scaleAsPercent).longValue() * 100000;
+       // this.extcX = extLong.toString();
+       // this.extcY = this.extcX;
+       Long dx = (new Double(this.imageDimension.getX()* UNITS_PER_IN)).longValue();
+       Long dy = (new Double(this.imageDimension.getY()* UNITS_PER_IN)).longValue();
+       
+       this.extcX = dx+"";
+       this.extcY = dy + "";
+       
         
     }
 

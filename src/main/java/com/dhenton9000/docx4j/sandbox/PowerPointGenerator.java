@@ -45,10 +45,11 @@ public class PowerPointGenerator {
      * for downloading
      * @param imageSuffix what kind of image we are sending by suffix: 'jpg'
      * 'png'
+     * @param scalePercent percent to scale the image eg 25.0f;
      *
      * @throws Exception
      */
-    public void generate(HashMap<String, String> mappings, InputStream isImage, OutputStream outStream, String imageSuffix) throws Exception {
+    public void generate(HashMap<String, String> mappings, InputStream isImage, OutputStream outStream, String imageSuffix,float scalePercent) throws Exception {
 
         InputStream templateStream = this.getClass().getResourceAsStream(PPTX_TEMPLATE);
 
@@ -79,7 +80,7 @@ public class PowerPointGenerator {
         BinaryPartAbstractImage newImage
                 = BinaryPartAbstractImage.createImagePart(presentationMLPackage, slidePart1, bytes);
 
-        contents.add(1, createPicture(newImage.getSourceRelationships().get(0).getId(), imgDim));
+        contents.add(1, createPicture(newImage.getSourceRelationships().get(0).getId(), imgDim,scalePercent));
         slidePart1.variableReplace(mappings);
 
         presentationMLPackage.save(outStream);
@@ -106,7 +107,9 @@ public class PowerPointGenerator {
                 reader.setInput(stream);
                 int width = reader.getWidth(reader.getMinIndex());
                 int height = reader.getHeight(reader.getMinIndex());
-                return new Dimension(width, height);
+                Dimension d = new Dimension(width, height);
+                LOG.debug("PPTX read dim "+d);
+                return d;
 
             } finally {
                 reader.dispose();
@@ -125,10 +128,10 @@ public class PowerPointGenerator {
      * @return
      * @throws Exception
      */
-    private Object createPicture(String relId, Dimension imgDim) throws Exception {
+    private Object createPicture(String relId, Dimension imgDim, float scalePercent) throws Exception {
         java.util.HashMap<String, String> mappings = new java.util.HashMap<String, String>();
 
-        OffsetAdjuster oA = new OffsetAdjuster(imgDim, 25.0f);
+        OffsetAdjuster oA = new OffsetAdjuster(imgDim, scalePercent);
        // LOG.debug("oa " + oA.toString());
 
         mappings.put("id1", "4");
@@ -158,7 +161,7 @@ public class PowerPointGenerator {
             FileOutputStream fOut = new FileOutputStream(System.getProperty("user.dir") + "/docs/out/sub200.pptx", false);
             PowerPointGenerator gen = new PowerPointGenerator();
 
-            gen.generate(mappings, isImage, fOut, "jpg");
+            gen.generate(mappings, isImage, fOut, "jpg",33.0f);
         } catch (Exception ex) {
             LOG.error("General error in main", ex);
         }

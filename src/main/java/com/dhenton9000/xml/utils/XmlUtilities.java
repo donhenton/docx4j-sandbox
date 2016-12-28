@@ -63,7 +63,7 @@ public final class XmlUtilities {
      * @param parentNode the node you want to attach the new node to
      * @param nodeName the name of the node that you want to attach
      * @param info the text context of the new node
-     * @returns a reference to the element created
+     * @return a reference to the element created
      */
     public static Element addANode(Document mainDoc, Element parentNode, String nodeName, String info) {
         Element tt = mainDoc.createElement(nodeName);
@@ -81,7 +81,7 @@ public final class XmlUtilities {
      * @param parentNode the node you want to attach the new node to
      * @param nodeName the name of the node that you want to attach
      * @param info the text context of the new node
-     * @returns a reference to the element created
+     * @return a reference to the element created
      */
     public static Element addACDataNode(Document mainDoc, Element parentNode, String nodeName, String info) {
         Element tt = mainDoc.createElement(nodeName);

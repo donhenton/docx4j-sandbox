@@ -1,0 +1,83 @@
+<svg id="bar1" width="860" height="210" style="background-color: green border: thin solid black; padding: 5px;">
+    <defs>
+        <pattern height="4" id="diagonalStripes"
+            patternUnits="userSpaceOnUse" width="4">
+            <path d="M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2" stroke="#c7d2d8" stroke-width="1"/>
+        </pattern>
+    </defs>
+    <g class="group-content">
+        <g class="rect-content" transform="translate(0,0)">
+            <rect class="background-bar" fill="url(#diagonalStripes)"
+                height="18" style="opacity: 1;"
+                transform="translate(0,23)" width="850"/>
+            <rect class="bar" height="18"
+                style="fill: rgb(247, 146, 33); opacity: 1;"
+                transform="translate(0,23)" width="518.5"/>
+            <text class="label"
+                style="font-family: graphikRegular, Helvetica, Arial, sans-serif; fill: rgb(77, 78, 84); font-size: 13px; opacity: 1;" transform="translate(0,18)">United States of America</text>
+            <text class="percent"
+                style="font-family: graphikRegular, Helvetica, Arial, sans-serif; fill: rgb(77, 78, 84); font-size: 13px; opacity: 1;"
+                text-anchor="end" transform="translate(850,18)">61%</text>
+        </g>
+    </g>
+    <g class="group-content">
+        <g class="rect-content" transform="translate(0,40)">
+            <rect class="background-bar" fill="url(#diagonalStripes)"
+                height="18" style="opacity: 1;"
+                transform="translate(0,23)" width="850"/>
+            <rect class="bar" height="18"
+                style="fill: rgb(0, 174, 239); opacity: 1;"
+                transform="translate(0,23)" width="76.5"/>
+            <text class="label"
+                style="font-family: graphikRegular, Helvetica, Arial, sans-serif; fill: rgb(77, 78, 84); font-size: 13px; opacity: 1;" transform="translate(0,18)">United Kingdom</text>
+            <text class="percent"
+                style="font-family: graphikRegular, Helvetica, Arial, sans-serif; fill: rgb(77, 78, 84); font-size: 13px; opacity: 1;"
+                text-anchor="end" transform="translate(850,18)">9%</text>
+        </g>
+    </g>
+    <g class="group-content">
+        <g class="rect-content" transform="translate(0,80)">
+            <rect class="background-bar" fill="url(#diagonalStripes)"
+                height="18" style="opacity: 1;"
+                transform="translate(0,23)" width="850"/>
+            <rect class="bar" height="18"
+                style="fill: rgb(30, 174, 93); opacity: 1;"
+                transform="translate(0,23)" width="289"/>
+            <text class="label"
+                style="font-family: graphikRegular, Helvetica, Arial, sans-serif; fill: rgb(77, 78, 84); font-size: 13px; opacity: 1;" transform="translate(0,18)">Canada</text>
+            <text class="percent"
+                style="font-family: graphikRegular, Helvetica, Arial, sans-serif; fill: rgb(77, 78, 84); font-size: 13px; opacity: 1;"
+                text-anchor="end" transform="translate(850,18)">34%</text>
+        </g>
+    </g>
+    <g class="group-content">
+        <g class="rect-content" transform="translate(0,120)">
+            <rect class="background-bar" fill="url(#diagonalStripes)"
+                height="18" style="opacity: 1;"
+                transform="translate(0,23)" width="850"/>
+            <rect class="bar" height="18"
+                style="fill: rgb(252, 188, 25); opacity: 1;"
+                transform="translate(0,23)" width="25.5"/>
+            <text class="label"
+                style="font-family: graphikRegular, Helvetica, Arial, sans-serif; fill: rgb(77, 78, 84); font-size: 13px; opacity: 1;" transform="translate(0,18)">Brazil</text>
+            <text class="percent"
+                style="font-family: graphikRegular, Helvetica, Arial, sans-serif; fill: rgb(77, 78, 84); font-size: 13px; opacity: 1;"
+                text-anchor="end" transform="translate(850,18)">3%</text>
+        </g>
+    </g>
+    <g class="group-content">
+        <g class="rect-content" transform="translate(0,160)">
+            <rect class="background-bar" fill="url(#diagonalStripes)"
+                height="18" style="opacity: 1;"
+                transform="translate(0,23)" width="850"/>
+            <rect class="bar" height="18"
+                style="fill: rgb(169, 207, 56); opacity: 1;"
+                transform="translate(0,23)" width="25.5"/>
+            <text class="label"
+                style="font-family: graphikRegular, Helvetica, Arial, sans-serif; fill: rgb(77, 78, 84); font-size: 13px; opacity: 1;" transform="translate(0,18)">India</text>
+            <text class="percent"
+                style="font-family: graphikRegular, Helvetica, Arial, sans-serif; fill: rgb(77, 78, 84); font-size: 13px; opacity: 1;"
+                text-anchor="end" transform="translate(850,18)">3%</text>
+        </g>
+    </g>
+</svg>
