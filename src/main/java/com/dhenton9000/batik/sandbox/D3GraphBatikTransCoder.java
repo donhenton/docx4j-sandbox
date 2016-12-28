@@ -7,6 +7,7 @@ package com.dhenton9000.batik.sandbox;
 
  
 import com.dhenton9000.xml.utils.ReplaceFilterInputStream;
+import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -21,6 +22,7 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.svg.SVGDocument;
 
 /**
  * class which takes the svg from a d3 graph and rasterizes it using
@@ -32,6 +34,11 @@ import org.w3c.dom.Document;
 public class D3GraphBatikTransCoder {
 
     protected static Logger LOG = LoggerFactory.getLogger(D3GraphBatikTransCoder.class);
+    private final String svgInput ;
+    
+    D3GraphBatikTransCoder(String svgInput) {
+         this.svgInput = svgInput;
+    }
 
     /**
      * adds the proper names space to svg that comes from d3
@@ -55,14 +62,18 @@ public class D3GraphBatikTransCoder {
      * @return a byte[] that contains the jpeg data.
      * @throws Exception 
      */
-    public ByteArrayInputStream loadDocument(String svgString) throws Exception {
+    public ByteArrayInputStream getDocument( ) throws Exception {
         LOG.debug("loading document ");
-        InputStream docStream = new ByteArrayInputStream(svgString.getBytes("UTF-8"));
+        InputStream docStream = new ByteArrayInputStream(svgInput.getBytes("UTF-8"));
         docStream = addNS(docStream);
         String parser = XMLResourceDescriptor.getXMLParserClassName();
         SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(parser);
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
-        Document document = factory.createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, docStream);
+        SVGDocument document = factory.createSVGDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, docStream);
+        int width = Integer.parseInt(document.getRootElement().getAttributeNode("width").getValue());
+        int height = Integer.parseInt(document.getRootElement().getAttributeNode("height").getValue());
+        Dimension d = new Dimension(width,height);
+        LOG.debug("dim is "+d);
 
         JPEGTranscoder t = new JPEGTranscoder();
         t.addTranscodingHint(JPEGTranscoder.KEY_QUALITY,
