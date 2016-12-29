@@ -1,7 +1,7 @@
 #DOCX4J Sandbox
 
 
-##Code for writing docx files programmatically:
+##Code for writing docx and pptx files programmatically:
 
 
 ##WORD
